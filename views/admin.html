@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin — Rachel Keeley</title>
+<title>Admin — Aria Voss</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -12,6 +12,7 @@
     --coral:  #D85A30; --coral-light: #FAECE7;
     --teal:   #1D9E75; --teal-light:  #E1F5EE;
     --purple: #534AB7; --purple-light: #EEEDFE;
+    --amber:  #BA7517; --amber-light: #FAEEDA;
     --ink: #1a1a18; --muted: #888780; --border: #e0ddd5; --bg: #FAFAF8;
   }
   html, body { height: 100%; }
@@ -65,6 +66,7 @@
   .track-card:nth-child(1) .track-num { background: var(--coral-light); color: var(--coral); }
   .track-card:nth-child(2) .track-num { background: var(--teal-light);  color: var(--teal);  }
   .track-card:nth-child(3) .track-num { background: var(--purple-light); color: var(--purple); }
+  .track-card:nth-child(4) .track-num { background: var(--amber-light); color: var(--amber); }
   .track-card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; flex: 1; }
   .track-status { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.7rem; border: 0.5px solid; }
   .status-empty  { border-color: var(--border); color: var(--muted); }
@@ -146,7 +148,7 @@
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <p class="logo">Rachel Keeley</p>
+    <p class="logo">Aria Voss</p>
     <p class="sub">Artist Admin</p>
     <label for="pw-input">Password</label>
     <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password">
@@ -158,7 +160,7 @@
 <!-- ADMIN -->
 <div id="admin-screen">
   <header>
-    <div class="logo">Rachel Keeley <span>Admin</span></div>
+    <div class="logo">Aria Voss <span>Admin</span></div>
     <div class="header-actions">
       <a href="/" class="view-site-btn" target="_blank">View site ↗</a>
       <button class="logout-btn" id="logout-btn">Sign out</button>
@@ -262,6 +264,38 @@
           <div class="card-actions">
             <button class="btn" style="flex:1" data-save="3">Save metadata</button>
             <button class="btn secondary" data-clear="3">Clear slot</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track 4 -->
+      <div class="track-card" id="tc-4">
+        <div class="track-card-header">
+          <div class="track-num">04</div>
+          <span class="track-card-title" id="th-4">Sample 4</span>
+          <span class="track-status status-empty" id="ts-4">No file</span>
+        </div>
+        <div class="track-card-body">
+          <div class="field-row">
+            <div class="field"><label for="t4-title">Track title</label><input type="text" id="t4-title" placeholder="e.g. Dusk"></div>
+            <div class="field"><label for="t4-genre">Genre / description</label><input type="text" id="t4-genre" placeholder="e.g. Narration"></div>
+          </div>
+          <div class="drop-zone" id="dz-4">
+            <input type="file" id="file-4" accept="audio/mpeg,audio/mp3,.mp3">
+            <div class="drop-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm12 0c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <p class="drop-label">Drop MP3 here or click to browse</p>
+            <p class="drop-sub">MP3 only · max 50 MB</p>
+          </div>
+          <div class="upload-progress" id="up-4"><div class="progress-bar-outer"><div class="progress-bar-inner" id="upbar-4"></div></div><p class="progress-label" id="uplabel-4">Uploading…</p></div>
+          <div class="file-loaded" id="fl-4">
+            <div class="file-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BA7517" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <div class="file-info"><p class="file-name" id="fn-4">—</p><p class="file-meta" id="fm-4">—</p></div>
+            <button class="remove-btn" data-slot="4" title="Remove">✕</button>
+          </div>
+          <div class="audio-preview" id="ap-4"><audio id="aud-4" controls preload="none"></audio></div>
+          <div class="card-actions">
+            <button class="btn" style="flex:1" data-save="4">Save metadata</button>
+            <button class="btn secondary" data-clear="4">Clear slot</button>
           </div>
         </div>
       </div>
@@ -379,7 +413,7 @@ async function loadExistingTracks() {
   try {
     const r = await fetch('/api/admin/tracks');
     const tracks = await r.json();
-    [1,2,3].forEach(n => {
+    [1,2,3,4].forEach(n => {
       const t = tracks[n];
       if (!t) return;
       if (t.title) { document.getElementById('t'+n+'-title').value = t.title; document.getElementById('th-'+n).textContent = t.title; }
@@ -417,7 +451,7 @@ function setStatus(n, loaded) {
 }
 
 /* ── FILE UPLOAD ── */
-[1,2,3].forEach(n => {
+[1,2,3,4].forEach(n => {
   const input = document.getElementById('file-'+n);
   const dz    = document.getElementById('dz-'+n);
 
@@ -452,6 +486,7 @@ async function uploadFile(n, file) {
     await new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', '/api/tracks/'+n);
+      xhr.withCredentials = true;
       xhr.upload.addEventListener('progress', e => {
         if (e.lengthComputable) {
           const pct = Math.round(e.loaded / e.total * 100);
