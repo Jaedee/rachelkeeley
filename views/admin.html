@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Aria Voss</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --coral:  #D85A30; --coral-light: #FAECE7;
+    --teal:   #1D9E75; --teal-light:  #E1F5EE;
+    --purple: #534AB7; --purple-light: #EEEDFE;
+    --ink: #1a1a18; --muted: #888780; --border: #e0ddd5; --bg: #FAFAF8;
+  }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', sans-serif; font-weight: 300; }
+
+  /* LOGIN */
+  #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .login-box { background: #fff; border: 0.5px solid var(--border); padding: 3rem 2.5rem; width: 100%; max-width: 380px; }
+  .login-box .logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.35rem; }
+  .login-box .sub { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 2.5rem; }
+  label { display: block; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  input[type="password"], input[type="text"] {
+    width: 100%; padding: 0.75rem 1rem; border: 0.5px solid var(--border);
+    background: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    color: var(--ink); outline: none; transition: border-color 0.2s; margin-bottom: 1.25rem;
+  }
+  input:focus { border-color: var(--ink); }
+  .btn { width: 100%; padding: 0.85rem; background: var(--ink); color: #fff; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; letter-spacing: 0.12em;
+    text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+  .btn:hover { background: var(--coral); }
+  .btn.secondary { background: transparent; color: var(--ink); border: 0.5px solid var(--border); }
+  .btn.secondary:hover { background: var(--bg); border-color: var(--ink); }
+  .login-error { font-size: 0.8rem; color: #c0392b; margin-top: 0.75rem; display: none; }
+
+  /* ADMIN */
+  #admin-screen { display: none; }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250,250,248,0.92); backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border); padding: 1.25rem 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  header .logo { font-family: 'Playfair Display', serif; font-size: 1rem; }
+  header .logo span { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--coral); margin-left: 0.75rem; font-family: 'DM Sans', sans-serif; }
+  .header-actions { display: flex; gap: 0.75rem; align-items: center; }
+  .logout-btn { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); background: none; border: none; cursor: pointer; transition: color 0.2s; }
+  .logout-btn:hover { color: var(--ink); }
+  .view-site-btn { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); text-decoration: none; border: 0.5px solid var(--border); padding: 0.4rem 0.9rem; transition: border-color 0.2s; }
+  .view-site-btn:hover { border-color: var(--ink); }
+
+  main { max-width: 860px; margin: 0 auto; padding: 3rem 2rem 6rem; }
+  .page-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem; }
+  .page-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 3rem; line-height: 1.6; }
+
+  /* TRACK CARDS */
+  .tracks-grid { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 3rem; }
+  .track-card { background: #fff; border: 0.5px solid var(--border); overflow: hidden; }
+  .track-card-header { display: flex; align-items: center; gap: 1rem; padding: 1.25rem 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .track-num { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; letter-spacing: 0.1em; flex-shrink: 0; font-weight: 500; }
+  .track-card:nth-child(1) .track-num { background: var(--coral-light); color: var(--coral); }
+  .track-card:nth-child(2) .track-num { background: var(--teal-light);  color: var(--teal);  }
+  .track-card:nth-child(3) .track-num { background: var(--purple-light); color: var(--purple); }
+  .track-card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; flex: 1; }
+  .track-status { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.3rem 0.7rem; border: 0.5px solid; }
+  .status-empty  { border-color: var(--border); color: var(--muted); }
+  .status-loaded { border-color: var(--teal);   color: var(--teal);  }
+  .track-card-body { padding: 1.5rem; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .field { display: flex; flex-direction: column; }
+  .field label { margin-bottom: 0.4rem; }
+  .field input[type="text"] { margin-bottom: 0; }
+
+  /* DROP ZONE */
+  .drop-zone { border: 1.5px dashed var(--border); padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; position: relative; margin-bottom: 1rem; }
+  .drop-zone:hover, .drop-zone.drag-over { border-color: var(--ink); background: #f5f4f0; }
+  .track-card:nth-child(1) .drop-zone:hover, .track-card:nth-child(1) .drop-zone.drag-over { border-color: var(--coral); background: var(--coral-light); }
+  .track-card:nth-child(2) .drop-zone:hover, .track-card:nth-child(2) .drop-zone.drag-over { border-color: var(--teal);  background: var(--teal-light);  }
+  .track-card:nth-child(3) .drop-zone:hover, .track-card:nth-child(3) .drop-zone.drag-over { border-color: var(--purple); background: var(--purple-light); }
+  .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .drop-icon { width: 36px; height: 36px; margin: 0 auto 0.75rem; border: 0.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .drop-label { font-size: 0.85rem; color: var(--ink); margin-bottom: 0.3rem; font-weight: 500; }
+  .drop-sub { font-size: 0.72rem; color: var(--muted); }
+
+  /* UPLOAD PROGRESS */
+  .upload-progress { display: none; margin-bottom: 1rem; }
+  .upload-progress.visible { display: block; }
+  .progress-bar-outer { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; margin-bottom: 0.4rem; }
+  .progress-bar-inner { height: 100%; width: 0%; transition: width 0.1s; border-radius: 2px; }
+  .track-card:nth-child(1) .progress-bar-inner { background: var(--coral); }
+  .track-card:nth-child(2) .progress-bar-inner { background: var(--teal); }
+  .track-card:nth-child(3) .progress-bar-inner { background: var(--purple); }
+  .progress-label { font-size: 0.72rem; color: var(--muted); }
+
+  /* FILE LOADED */
+  .file-loaded { display: none; align-items: center; gap: 1rem; padding: 1rem 1.25rem; background: var(--bg); border: 0.5px solid var(--border); margin-bottom: 1rem; }
+  .file-loaded.visible { display: flex; }
+  .file-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .track-card:nth-child(1) .file-icon { background: var(--coral-light); }
+  .track-card:nth-child(2) .file-icon { background: var(--teal-light);  }
+  .track-card:nth-child(3) .file-icon { background: var(--purple-light); }
+  .file-info { flex: 1; }
+  .file-name { font-size: 0.85rem; font-weight: 500; }
+  .file-meta { font-size: 0.72rem; color: var(--muted); }
+  .remove-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 1.1rem; padding: 0.25rem; transition: color 0.2s; }
+  .remove-btn:hover { color: #c0392b; }
+
+  /* AUDIO PREVIEW */
+  .audio-preview { display: none; align-items: center; gap: 0.75rem; margin-bottom: 1rem; padding: 0.75rem 1rem; background: var(--bg); border: 0.5px solid var(--border); }
+  .audio-preview.visible { display: flex; }
+  .audio-preview audio { flex: 1; height: 32px; }
+
+  .card-actions { display: flex; gap: 0.75rem; padding-top: 1rem; border-top: 0.5px solid var(--border); }
+
+  /* CHANGE PASSWORD */
+  .section-divider { border: none; border-top: 0.5px solid var(--border); margin: 3rem 0 2rem; }
+  .section-heading { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 400; margin-bottom: 0.5rem; }
+  .section-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .pw-form { background: #fff; border: 0.5px solid var(--border); padding: 1.5rem; max-width: 400px; }
+  .pw-form label { margin-bottom: 0.4rem; }
+  .pw-form input { margin-bottom: 1rem; }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--ink); color: #fff; padding: 0.85rem 1.5rem; font-size: 0.8rem; opacity: 0; transform: translateY(8px); transition: opacity 0.25s, transform 0.25s; pointer-events: none; z-index: 999; }
+  #toast.show { opacity: 1; transform: translateY(0); }
+  #toast.error { background: #c0392b; }
+
+  /* CANVAS */
+  #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+  #login-screen, #admin-screen { position: relative; z-index: 1; }
+
+  @media (max-width: 600px) {
+    header { padding: 1rem 1.25rem; }
+    main { padding: 2rem 1.25rem 4rem; }
+    .field-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <p class="logo">Aria Voss</p>
+    <p class="sub">Artist Admin</p>
+    <label for="pw-input">Password</label>
+    <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password">
+    <button class="btn" id="login-btn">Sign in</button>
+    <p class="login-error" id="login-error">Incorrect password.</p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen">
+  <header>
+    <div class="logo">Aria Voss <span>Admin</span></div>
+    <div class="header-actions">
+      <a href="/" class="view-site-btn" target="_blank">View site ↗</a>
+      <button class="logout-btn" id="logout-btn">Sign out</button>
+    </div>
+  </header>
+  <main>
+    <h1 class="page-title">Voice Samples</h1>
+    <p class="page-sub">Upload an MP3 for each sample slot. Files are stored on the server and stream directly to visitors.</p>
+
+    <div class="tracks-grid">
+
+      <!-- Track 1 -->
+      <div class="track-card" id="tc-1">
+        <div class="track-card-header">
+          <div class="track-num">01</div>
+          <span class="track-card-title" id="th-1">Sample 1</span>
+          <span class="track-status status-empty" id="ts-1">No file</span>
+        </div>
+        <div class="track-card-body">
+          <div class="field-row">
+            <div class="field"><label for="t1-title">Track title</label><input type="text" id="t1-title" placeholder="e.g. Still Water"></div>
+            <div class="field"><label for="t1-genre">Genre / description</label><input type="text" id="t1-genre" placeholder="e.g. Contemporary art song"></div>
+          </div>
+          <div class="drop-zone" id="dz-1">
+            <input type="file" id="file-1" accept="audio/mpeg,audio/mp3,.mp3">
+            <div class="drop-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm12 0c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <p class="drop-label">Drop MP3 here or click to browse</p>
+            <p class="drop-sub">MP3 only · max 50 MB</p>
+          </div>
+          <div class="upload-progress" id="up-1"><div class="progress-bar-outer"><div class="progress-bar-inner" id="upbar-1"></div></div><p class="progress-label" id="uplabel-1">Uploading…</p></div>
+          <div class="file-loaded" id="fl-1">
+            <div class="file-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D85A30" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <div class="file-info"><p class="file-name" id="fn-1">—</p><p class="file-meta" id="fm-1">—</p></div>
+            <button class="remove-btn" data-slot="1" title="Remove">✕</button>
+          </div>
+          <div class="audio-preview" id="ap-1"><audio id="aud-1" controls preload="none"></audio></div>
+          <div class="card-actions">
+            <button class="btn" style="flex:1" data-save="1">Save metadata</button>
+            <button class="btn secondary" data-clear="1">Clear slot</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track 2 -->
+      <div class="track-card" id="tc-2">
+        <div class="track-card-header">
+          <div class="track-num">02</div>
+          <span class="track-card-title" id="th-2">Sample 2</span>
+          <span class="track-status status-empty" id="ts-2">No file</span>
+        </div>
+        <div class="track-card-body">
+          <div class="field-row">
+            <div class="field"><label for="t2-title">Track title</label><input type="text" id="t2-title" placeholder="e.g. Meridian"></div>
+            <div class="field"><label for="t2-genre">Genre / description</label><input type="text" id="t2-genre" placeholder="e.g. Experimental vocal"></div>
+          </div>
+          <div class="drop-zone" id="dz-2">
+            <input type="file" id="file-2" accept="audio/mpeg,audio/mp3,.mp3">
+            <div class="drop-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm12 0c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <p class="drop-label">Drop MP3 here or click to browse</p>
+            <p class="drop-sub">MP3 only · max 50 MB</p>
+          </div>
+          <div class="upload-progress" id="up-2"><div class="progress-bar-outer"><div class="progress-bar-inner" id="upbar-2"></div></div><p class="progress-label" id="uplabel-2">Uploading…</p></div>
+          <div class="file-loaded" id="fl-2">
+            <div class="file-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <div class="file-info"><p class="file-name" id="fn-2">—</p><p class="file-meta" id="fm-2">—</p></div>
+            <button class="remove-btn" data-slot="2" title="Remove">✕</button>
+          </div>
+          <div class="audio-preview" id="ap-2"><audio id="aud-2" controls preload="none"></audio></div>
+          <div class="card-actions">
+            <button class="btn" style="flex:1" data-save="2">Save metadata</button>
+            <button class="btn secondary" data-clear="2">Clear slot</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Track 3 -->
+      <div class="track-card" id="tc-3">
+        <div class="track-card-header">
+          <div class="track-num">03</div>
+          <span class="track-card-title" id="th-3">Sample 3</span>
+          <span class="track-status status-empty" id="ts-3">No file</span>
+        </div>
+        <div class="track-card-body">
+          <div class="field-row">
+            <div class="field"><label for="t3-title">Track title</label><input type="text" id="t3-title" placeholder="e.g. Afterglow"></div>
+            <div class="field"><label for="t3-genre">Genre / description</label><input type="text" id="t3-genre" placeholder="e.g. Chamber performance"></div>
+          </div>
+          <div class="drop-zone" id="dz-3">
+            <input type="file" id="file-3" accept="audio/mpeg,audio/mp3,.mp3">
+            <div class="drop-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm12 0c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <p class="drop-label">Drop MP3 here or click to browse</p>
+            <p class="drop-sub">MP3 only · max 50 MB</p>
+          </div>
+          <div class="upload-progress" id="up-3"><div class="progress-bar-outer"><div class="progress-bar-inner" id="upbar-3"></div></div><p class="progress-label" id="uplabel-3">Uploading…</p></div>
+          <div class="file-loaded" id="fl-3">
+            <div class="file-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.5"><path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg></div>
+            <div class="file-info"><p class="file-name" id="fn-3">—</p><p class="file-meta" id="fm-3">—</p></div>
+            <button class="remove-btn" data-slot="3" title="Remove">✕</button>
+          </div>
+          <div class="audio-preview" id="ap-3"><audio id="aud-3" controls preload="none"></audio></div>
+          <div class="card-actions">
+            <button class="btn" style="flex:1" data-save="3">Save metadata</button>
+            <button class="btn secondary" data-clear="3">Clear slot</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <hr class="section-divider">
+    <h2 class="section-heading">Change password</h2>
+    <p class="section-sub">Your password is stored as a bcrypt hash on the server — never in plain text.</p>
+    <div class="pw-form">
+      <label for="new-pw">New password</label>
+      <input type="password" id="new-pw" placeholder="At least 8 characters">
+      <label for="confirm-pw">Confirm password</label>
+      <input type="password" id="confirm-pw" placeholder="Repeat new password">
+      <button class="btn" id="change-pw-btn">Update password</button>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ── BACKGROUND ── */
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  const C = ['rgba(216,90,48,','rgba(29,158,117,','rgba(83,74,183,','rgba(186,117,23,'];
+  let W, H;
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  function rand(a,b){ return a+Math.random()*(b-a); }
+  const shapes = Array.from({length:12},()=>({
+    x:rand(0,1),y:rand(0,1),r:rand(60,280),vx:rand(-0.03,0.03),vy:rand(-0.025,0.025),
+    rot:rand(0,Math.PI*2),vrot:rand(-0.0008,0.0008),alpha:rand(0.015,0.04),
+    stroke:rand(0.4,1.5),colour:C[Math.floor(Math.random()*4)],arc:Math.random()>0.5,span:rand(0.3,1.2)
+  }));
+  let last=null;
+  function draw(ts){
+    const dt=last?Math.min((ts-last)/1000,0.05):0.016; last=ts;
+    ctx.clearRect(0,0,W,H);
+    for(const s of shapes){
+      s.x+=s.vx*dt; s.y+=s.vy*dt; s.rot+=s.vrot;
+      if(s.x<-0.3)s.x=1.3; if(s.x>1.3)s.x=-0.3;
+      if(s.y<-0.3)s.y=1.3; if(s.y>1.3)s.y=-0.3;
+      ctx.save(); ctx.translate(s.x*W,s.y*H); ctx.rotate(s.rot);
+      ctx.beginPath();
+      s.arc?ctx.arc(0,0,s.r,-s.span/2,s.span/2):ctx.arc(0,0,s.r,0,Math.PI*2);
+      ctx.strokeStyle=s.colour+s.alpha+')'; ctx.lineWidth=s.stroke; ctx.stroke();
+      ctx.restore();
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+
+/* ── TOAST ── */
+function toast(msg, isError=false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (isError ? ' error' : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = '', 3200);
+}
+
+/* ── AUTH ── */
+async function checkAuth() {
+  const r = await fetch('/api/me');
+  const d = await r.json();
+  if (d.authenticated) showAdmin();
+}
+checkAuth();
+
+document.getElementById('login-btn').onclick = attemptLogin;
+document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
+
+async function attemptLogin() {
+  const pw = document.getElementById('pw-input').value;
+  const btn = document.getElementById('login-btn');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw }),
+    });
+    if (r.ok) {
+      showAdmin();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  } catch(e) {
+    toast('Network error — is the server running?', true);
+  }
+  btn.textContent = 'Sign in'; btn.disabled = false;
+}
+
+document.getElementById('logout-btn').onclick = async () => {
+  await fetch('/api/logout', { method: 'POST' });
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('pw-input').value = '';
+};
+
+function showAdmin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  loadExistingTracks();
+}
+
+/* ── LOAD EXISTING TRACKS ── */
+async function loadExistingTracks() {
+  try {
+    const r = await fetch('/api/admin/tracks');
+    const tracks = await r.json();
+    [1,2,3].forEach(n => {
+      const t = tracks[n];
+      if (!t) return;
+      if (t.title) { document.getElementById('t'+n+'-title').value = t.title; document.getElementById('th-'+n).textContent = t.title; }
+      if (t.genre) document.getElementById('t'+n+'-genre').value = t.genre;
+      if (t.filename) {
+        showFileLoaded(n, t.originalName || t.filename, t.uploadedAt);
+        setStatus(n, true);
+      }
+    });
+  } catch(e) {}
+}
+
+/* ── FILE UI HELPERS ── */
+function showFileLoaded(n, name, meta) {
+  document.getElementById('fn-'+n).textContent = name;
+  document.getElementById('fm-'+n).textContent = meta ? 'Uploaded ' + new Date(meta).toLocaleDateString() : '';
+  document.getElementById('fl-'+n).classList.add('visible');
+  document.getElementById('dz-'+n).style.display = 'none';
+  document.getElementById('aud-'+n).src = '/audio/track-'+n+'.mp3?t='+Date.now();
+  document.getElementById('ap-'+n).classList.add('visible');
+}
+
+function clearFileUI(n) {
+  document.getElementById('fl-'+n).classList.remove('visible');
+  document.getElementById('ap-'+n).classList.remove('visible');
+  document.getElementById('dz-'+n).style.display = '';
+  document.getElementById('aud-'+n).src = '';
+  document.getElementById('file-'+n).value = '';
+}
+
+function setStatus(n, loaded) {
+  const el = document.getElementById('ts-'+n);
+  el.textContent = loaded ? 'Loaded' : 'No file';
+  el.className = 'track-status ' + (loaded ? 'status-loaded' : 'status-empty');
+}
+
+/* ── FILE UPLOAD ── */
+[1,2,3].forEach(n => {
+  const input = document.getElementById('file-'+n);
+  const dz    = document.getElementById('dz-'+n);
+
+  input.addEventListener('change', () => { if(input.files[0]) uploadFile(n, input.files[0]); });
+
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (!f || !f.type.includes('audio')) { toast('Please drop an MP3 file.', true); return; }
+    uploadFile(n, f);
+  });
+});
+
+async function uploadFile(n, file) {
+  if (file.size > 50 * 1024 * 1024) { toast('File too large — max 50 MB.', true); return; }
+
+  const progressWrap = document.getElementById('up-'+n);
+  const progressBar  = document.getElementById('upbar-'+n);
+  const progressLbl  = document.getElementById('uplabel-'+n);
+  const dz = document.getElementById('dz-'+n);
+
+  dz.style.display = 'none';
+  progressWrap.classList.add('visible');
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    // Use XHR for upload progress
+    await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/tracks/'+n);
+      xhr.upload.addEventListener('progress', e => {
+        if (e.lengthComputable) {
+          const pct = Math.round(e.loaded / e.total * 100);
+          progressBar.style.width = pct + '%';
+          progressLbl.textContent = pct < 100 ? `Uploading… ${pct}%` : 'Processing…';
+        }
+      });
+      xhr.onload = () => {
+        if (xhr.status === 200) resolve(JSON.parse(xhr.responseText));
+        else reject(new Error(JSON.parse(xhr.responseText).error || 'Upload failed'));
+      };
+      xhr.onerror = () => reject(new Error('Network error'));
+      xhr.send(formData);
+    });
+
+    progressWrap.classList.remove('visible');
+    progressBar.style.width = '0%';
+    showFileLoaded(n, file.name, new Date().toISOString());
+    setStatus(n, true);
+    toast('Track ' + n + ' uploaded successfully.');
+
+    // Auto-save metadata if fields are filled
+    const title = document.getElementById('t'+n+'-title').value.trim();
+    const genre = document.getElementById('t'+n+'-genre').value.trim();
+    if (title || genre) await saveMetadata(n);
+
+  } catch(e) {
+    progressWrap.classList.remove('visible');
+    dz.style.display = '';
+    toast(e.message, true);
+  }
+}
+
+/* ── SAVE METADATA ── */
+async function saveMetadata(n) {
+  const title = document.getElementById('t'+n+'-title').value.trim();
+  const genre = document.getElementById('t'+n+'-genre').value.trim();
+  const r = await fetch('/api/tracks/'+n, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title, genre }),
+  });
+  if (r.ok) {
+    if (title) document.getElementById('th-'+n).textContent = title;
+    toast('Metadata saved for track ' + n + '.');
+  } else {
+    toast('Failed to save metadata.', true);
+  }
+}
+
+document.querySelectorAll('[data-save]').forEach(btn => {
+  btn.onclick = () => saveMetadata(parseInt(btn.dataset.save));
+});
+
+/* ── CLEAR SLOT ── */
+document.querySelectorAll('[data-clear]').forEach(btn => {
+  btn.onclick = async () => {
+    const n = parseInt(btn.dataset.clear);
+    if (!confirm(`Clear slot ${n}? This will delete the uploaded file.`)) return;
+    const r = await fetch('/api/tracks/'+n, { method: 'DELETE' });
+    if (r.ok) {
+      clearFileUI(n);
+      setStatus(n, false);
+      document.getElementById('t'+n+'-title').value = '';
+      document.getElementById('t'+n+'-genre').value = '';
+      document.getElementById('th-'+n).textContent = 'Sample ' + n;
+      toast('Slot ' + n + ' cleared.');
+    } else {
+      toast('Failed to clear slot.', true);
+    }
+  };
+});
+
+/* ── REMOVE FILE BUTTON ── */
+document.querySelectorAll('.remove-btn').forEach(btn => {
+  btn.onclick = () => document.querySelector('[data-clear="'+btn.dataset.slot+'"]').click();
+});
+
+/* ── CHANGE PASSWORD ── */
+document.getElementById('change-pw-btn').onclick = async () => {
+  const np = document.getElementById('new-pw').value;
+  const cp = document.getElementById('confirm-pw').value;
+  if (np.length < 8) { toast('Password must be at least 8 characters.', true); return; }
+  if (np !== cp)     { toast('Passwords do not match.', true); return; }
+  const r = await fetch('/api/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: np }),
+  });
+  if (r.ok) {
+    document.getElementById('new-pw').value = '';
+    document.getElementById('confirm-pw').value = '';
+    toast('Password updated.');
+  } else {
+    const d = await r.json();
+    toast(d.error || 'Failed to update password.', true);
+  }
+};
+</script>
+</body>
+</html>
