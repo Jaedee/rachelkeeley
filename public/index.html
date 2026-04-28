@@ -348,27 +348,22 @@
     margin-bottom: 1.5rem;
   }
 
-  .about-right p:first-child::first-letter {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.5rem;
-    float: left;
-    line-height: 0.8;
-    margin: 0.1em 0.12em 0 0;
-    color: var(--teal);
-  }
 
   .stats-row {
     display: flex; gap: 3rem; margin-top: 3rem;
     padding-top: 2.5rem;
     border-top: 0.5px solid #d0cdc5;
+    clear: both;
   }
   .stat-item {}
   .stat-num {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
     font-weight: 400;
-    color: var(--ink);
+    color: var(--teal);
     line-height: 1;
+    font-variant-numeric: normal;
+    font-feature-settings: "ordn" off;
   }
   .stat-label {
     font-size: 0.72rem;
@@ -538,7 +533,7 @@
     <p>She collaborates regularly with composers, choreographers, and visual artists across Europe, and has performed at venues including Wigmore Hall, Café OTO, and the Barbican.</p>
     <div class="stats-row">
       <div class="stat-item">
-        <p class="stat-num">12+</p>
+        <p class="stat-num">12</p>
         <p class="stat-label">Years performing</p>
       </div>
       <div class="stat-item">
