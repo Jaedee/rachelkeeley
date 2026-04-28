@@ -223,6 +223,6 @@ app.get('/admin', (req, res) => {
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
-app.listen(PORT, '127.0.0.1', () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Aria Voss server running on http://127.0.0.1:${PORT}`);
 });
