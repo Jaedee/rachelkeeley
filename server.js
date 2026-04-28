@@ -10,6 +10,7 @@ const path         = require('path');
 const fs           = require('fs');
 
 const app  = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
 // ── Directories ──────────────────────────────────────────────────────────────
@@ -84,7 +85,7 @@ function requireAuth(req, res, next) {
 app.get('/api/tracks', (req, res) => {
   const tracks = readTracks();
   const out = {};
-  [1, 2, 3].forEach(n => {
+  [1, 2, 3, 4].forEach(n => {
     const t = tracks[n];
     if (t) {
       out[n] = {
@@ -133,7 +134,7 @@ app.get('/api/me', (req, res) => {
 // Upload an MP3 for a slot
 app.post('/api/tracks/:slot', requireAuth, (req, res) => {
   const slot = parseInt(req.params.slot);
-  if (![1, 2, 3].includes(slot)) return res.status(400).json({ error: 'Invalid slot.' });
+  if (![1, 2, 3, 4].includes(slot)) return res.status(400).json({ error: 'Invalid slot.' });
 
   upload.single('file')(req, res, err => {
     if (err) return res.status(400).json({ error: err.message });
@@ -154,7 +155,7 @@ app.post('/api/tracks/:slot', requireAuth, (req, res) => {
 // Update title/genre metadata for a slot
 app.patch('/api/tracks/:slot', requireAuth, (req, res) => {
   const slot = parseInt(req.params.slot);
-  if (![1, 2, 3].includes(slot)) return res.status(400).json({ error: 'Invalid slot.' });
+  if (![1, 2, 3, 4].includes(slot)) return res.status(400).json({ error: 'Invalid slot.' });
 
   const { title, genre } = req.body;
   const tracks = readTracks();
@@ -166,7 +167,7 @@ app.patch('/api/tracks/:slot', requireAuth, (req, res) => {
 // Clear a slot (delete file + metadata)
 app.delete('/api/tracks/:slot', requireAuth, (req, res) => {
   const slot = parseInt(req.params.slot);
-  if (![1, 2, 3].includes(slot)) return res.status(400).json({ error: 'Invalid slot.' });
+  if (![1, 2, 3, 4].includes(slot)) return res.status(400).json({ error: 'Invalid slot.' });
 
   const filePath = path.join(UPLOADS_DIR, `track-${slot}.mp3`);
   if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
