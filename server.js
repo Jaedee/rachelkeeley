@@ -59,9 +59,10 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'change-this-secret',
   resave: false,
   saveUninitialized: false,
+  name: 'av.sid',
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true behind HTTPS
+    secure: false,
     sameSite: 'lax',
     maxAge: 8 * 60 * 60 * 1000, // 8 hours
   },
@@ -113,7 +114,11 @@ app.post('/api/login', async (req, res) => {
   const ok = await bcrypt.compare(password, hash);
   if (ok) {
     req.session.authenticated = true;
-    res.json({ ok: true });
+    req.session.save(err => {
+      if (err) return res.status(500).json({ error: 'Session error.' });
+      res.setHeader('Cache-Control', 'no-store');
+      res.json({ ok: true });
+    });
   } else {
     // Small delay to slow brute-force attempts
     await new Promise(r => setTimeout(r, 500));
