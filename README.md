@@ -135,18 +135,44 @@ pm2 stop ariavoss
 
 ---
 
-## 7. Configure nginx
+## 7. Configure nginx on the reverse proxy LXC (192.168.0.252)
 
-On your nginx LXC, add a new site config. Replace `yourdomain.com` and `LXC_IP` with your actual values:
+Your setup uses a dedicated reverse proxy LXC at `192.168.0.252`, with OPNsense forwarding ports 80 and 443 to it, and Cloudflare in **Full (strict)** mode. The Node server runs on the webserver LXC at `192.168.0.251`.
+
+### SSL certificate
+
+You need a Cloudflare Origin Certificate for the artist's domain. If it's on a **different Cloudflare account** from your EBS domain, you'll need a new one:
+
+1. In Cloudflare → SSL/TLS → Origin Server → Create Certificate
+2. Choose "Let Cloudflare generate a key and CSR"
+3. Add your domain (e.g. `ariavoss.com` and `*.ariavoss.com`)
+4. Select 15-year validity, click Create
+5. Copy the certificate and key
+
+On the **reverse proxy LXC** (via the Proxmox web console):
+
+```bash
+mkdir -p /etc/ssl/cloudflare/ariavoss
+nano /etc/ssl/cloudflare/ariavoss/origin.pem   # paste certificate, Ctrl+X, Y
+nano /etc/ssl/cloudflare/ariavoss/origin.key   # paste key, Ctrl+X, Y
+chmod 644 /etc/ssl/cloudflare/ariavoss/origin.pem
+chmod 600 /etc/ssl/cloudflare/ariavoss/origin.key
+```
+
+### nginx site config
+
+On the reverse proxy LXC, create the site config. Replace `yourdomain.com` with the artist's actual domain:
+
+```bash
+nano /etc/nginx/sites-available/ariavoss
+```
+
+Paste this — it matches the same pattern as your existing EBS config:
 
 ```nginx
-# /etc/nginx/sites-available/ariavoss
-
 server {
     listen 80;
     server_name yourdomain.com;
-
-    # Redirect HTTP to HTTPS
     return 301 https://$host$request_uri;
 }
 
@@ -154,18 +180,19 @@ server {
     listen 443 ssl;
     server_name yourdomain.com;
 
-    # Your SSL certs (e.g. from Let's Encrypt / Certbot)
-    ssl_certificate     /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    ssl_certificate     /etc/ssl/cloudflare/ariavoss/origin.pem;
+    ssl_certificate_key /etc/ssl/cloudflare/ariavoss/origin.key;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
 
     # Security headers
     add_header X-Frame-Options SAMEORIGIN;
     add_header X-Content-Type-Options nosniff;
     add_header Referrer-Policy no-referrer-when-downgrade;
 
-    # Proxy everything to Node
     location / {
-        proxy_pass         http://LXC_IP:3000;
+        proxy_pass         http://192.168.0.251:3000;
         proxy_http_version 1.1;
         proxy_set_header   Upgrade $http_upgrade;
         proxy_set_header   Connection 'upgrade';
@@ -173,36 +200,34 @@ server {
         proxy_set_header   X-Real-IP $remote_addr;
         proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 60s;
+        proxy_send_timeout 60s;
 
-        # Increase upload limit for MP3s (default is 1MB)
+        # Increase upload limit for MP3s
         client_max_body_size 55M;
     }
 }
 ```
 
-Enable it and reload nginx:
+Enable it and reload:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/ariavoss /etc/nginx/sites-enabled/
-sudo nginx -t          # check for syntax errors
-sudo systemctl reload nginx
+ln -s /etc/nginx/sites-available/ariavoss /etc/nginx/sites-enabled/
+nginx -t               # check for syntax errors — fix anything before continuing
+systemctl reload nginx
 ```
+
+### OPNsense
+
+No changes needed there — it's already forwarding 80 and 443 to `192.168.0.252`. The new domain will just be an additional `server_name` on the same proxy.
+
+### Cloudflare DNS
+
+In Cloudflare for the artist's domain, add an A record pointing to your public IP, with the orange cloud (proxied) enabled. Make sure SSL/TLS mode is set to **Full (strict)**.
 
 ---
 
-## 8. SSL with Let's Encrypt (if not already set up)
-
-```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d yourdomain.com
-```
-
-Certbot will handle the cert and auto-renew.
-
----
-
-## Done
+## 8. Done
 
 - Front page: `https://yourdomain.com`
 - Admin page: `https://yourdomain.com/admin`
