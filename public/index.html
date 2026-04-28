@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aria Voss — Vocal Artist</title>
+<title>Rachel Keeley — Vocal Artist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -356,14 +356,13 @@
     clear: both;
   }
   .stat-item {}
-  .stat-num {
+  .stat-item .stat-num {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
     font-weight: 400;
     color: var(--teal);
     line-height: 1;
-    font-variant-numeric: normal;
-    font-feature-settings: "ordn" off;
+    margin-bottom: 0;
   }
   .stat-label {
     font-size: 0.72rem;
@@ -456,7 +455,7 @@
 <canvas id="bg-canvas"></canvas>
 
 <nav>
-  <a class="logo" href="#">Aria Voss</a>
+  <a class="logo" href="#">Rachel Keeley</a>
   <ul>
     <li><a href="#samples">Listen</a></li>
     <li><a href="#about">About</a></li>
@@ -467,9 +466,18 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <p class="eyebrow">Vocal artist &amp; composer</p>
-    <h1>Aria<br><em>Voss</em></h1>
-    <p class="hero-desc">Weaving threads of classical training with the raw immediacy of contemporary performance. A voice that asks you to stay a little longer.</p>
+    <p class="eyebrow">Narration · Voice acting · Voiceover</p>
+    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+      <h1>Rachel<br><em>Keeley</em></h1>
+      <a href="https://instagram.com/" target="_blank" rel="noopener" style="color:var(--muted); transition:color 0.2s; display:inline-flex; align-items:center;" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="font-size:clamp(3.5rem, 6vw, 6rem);">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+    </div>
+    <p class="hero-desc">A voice that brings words to life — whether that's a character, a story, or a brand. Warm, versatile, and always exactly what the moment needs.</p>
     <div class="sample-pills">
 
       <button class="pill-player" id="pill-1">
@@ -510,12 +518,12 @@
   <div class="hero-right">
     <div class="hero-colour-block"></div>
     <div class="hero-accent-bar"></div>
-    <div class="hero-initials">AV</div>
-    <div class="hero-tag">Available 2025</div>
+    <div class="hero-initials">RK</div>
+    <div class="hero-tag">Available for work 2026</div>
     <div class="genre-pills">
-      <span class="pill">Contemporary</span>
-      <span class="pill">Art Song</span>
-      <span class="pill">Experimental</span>
+      <span class="pill">Narration</span>
+      <span class="pill">Voice Acting</span>
+      <span class="pill">Voiceover</span>
     </div>
   </div>
 </section>
@@ -524,25 +532,25 @@
 <section class="about-section" id="about">
   <div class="about-left">
     <p class="section-label">About</p>
-    <div class="big-initial">A</div>
+    <div class="big-initial">R</div>
   </div>
   <div class="about-right">
-    <h2>A voice shaped<br>by two worlds.</h2>
-    <p>Aria Voss is a Manchester-based vocal artist whose practice sits at the threshold between the concert hall and the avant-garde. Trained at the Royal Northern College of Music, she has developed a voice that is technically precise yet instinctively alive to risk and silence.</p>
-    <p>Her compositions draw on extended vocal technique, field recordings, and the intimate grain of speech. Each performance is constructed as a single, sustained gesture — one long breath held between artist and audience.</p>
-    <p>She collaborates regularly with composers, choreographers, and visual artists across Europe, and has performed at venues including Wigmore Hall, Café OTO, and the Barbican.</p>
+    <h2>A voice for every<br>story worth telling.</h2>
+    <p>Rachel Keeley is a Manchester-based voice artist with a talent for making every word land. Whether she's narrating an audiobook, inhabiting a character, or giving a brand its voice, she brings the same thing every time: clarity, warmth, and a delivery that feels completely alive.</p>
+    <p>Her voiceover work spans commercial campaigns, documentary narration, animation, and corporate film. Her voice acting ranges from intimate character-driven audio drama to high-energy gaming and animation. Whatever the brief, she finds the truth in it quickly — and makes it sound effortless.</p>
+    <p>She works from her professional home studio and is available for remote sessions worldwide, with fast turnaround and a collaborative approach from first read to final take.</p>
     <div class="stats-row">
       <div class="stat-item">
         <p class="stat-num">12</p>
-        <p class="stat-label">Years performing</p>
+        <p class="stat-label">Years experience</p>
       </div>
       <div class="stat-item">
         <p class="stat-num">40</p>
-        <p class="stat-label">Venues worldwide</p>
+        <p class="stat-label">Clients worldwide</p>
       </div>
       <div class="stat-item">
         <p class="stat-num">3</p>
-        <p class="stat-label">Solo recordings</p>
+        <p class="stat-label">Home studio setups</p>
       </div>
     </div>
   </div>
@@ -552,15 +560,14 @@
 <section class="contact-section" id="contact">
   <p class="section-label" style="justify-content: center; text-align:center;">Get in touch</p>
   <h2>Let's make something.</h2>
-  <p>For bookings, commissions, collaboration, and press enquiries — Aria works closely with each project she takes on.</p>
-  <a href="mailto:hello@ariavoss.com" class="contact-email">hello@ariavoss.com</a>
-  <a href="mailto:hello@ariavoss.com" class="btn-primary">Send an enquiry</a>
+  <p>For voiceover briefs, casting enquiries, collaborations, and rates — Rachel is quick to respond and easy to work with.</p>
+  <a href="mailto:hello@RachelKeeley.com" class="contact-email">hello@RachelKeeley.com</a>
+  <a href="mailto:hello@RachelKeeley.com" class="btn-primary">Send an enquiry</a>
 </section>
 
 <footer>
-  <span>© 2025 Aria Voss</span>
+  <span>© 2025 Rachel Keeley</span>
   <span>Manchester, England</span>
-  <span><a href="#">Instagram</a> &nbsp;·&nbsp; <a href="#">Bandcamp</a></span>
 </footer>
 
 <script>
