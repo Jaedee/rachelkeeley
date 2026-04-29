@@ -33,39 +33,12 @@
     overflow-x: hidden;
   }
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1.5rem 4rem;
-    background: rgba(250,250,248,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 0.5px solid #e0ddd5;
-  }
-  nav .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.05em;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  nav ul { list-style: none; display: flex; gap: 2.5rem; }
-  nav ul a {
-    font-size: 0.8rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  nav ul a:hover { color: var(--ink); }
-
   /* ── HERO ── */
   .hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-auto-rows: min-content;
-    margin-top: 4.5rem;
+    margin-top: 0;
   }
 
   .hero-left {
@@ -261,6 +234,7 @@
   .pill-player:nth-child(1) { background: var(--coral); }
   .pill-player:nth-child(2) { background: var(--teal); }
   .pill-player:nth-child(3) { background: var(--purple); }
+  .pill-player:nth-child(4) { background: var(--amber); }
 
   .pill-play-icon {
     width: 22px; height: 22px;
@@ -419,7 +393,7 @@
     pointer-events: none;
   }
 
-  nav, section, footer { position: relative; z-index: 1; }
+  section, footer { position: relative; z-index: 1; }
 
   /* ── ANIMATIONS ── */
   @keyframes fadeUp {
@@ -433,8 +407,6 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
-    nav { padding: 1.25rem 2rem; }
-    nav ul { gap: 1.5rem; }
     section { padding: 3rem 1.5rem; }
     .hero { grid-template-columns: 1fr; }
     .hero-right { display: none; }
@@ -454,14 +426,6 @@
 
 <canvas id="bg-canvas"></canvas>
 
-<nav>
-  <a class="logo" href="#">Rachel Keeley</a>
-  <ul>
-    <li><a href="#samples">Listen</a></li>
-    <li><a href="#about">About</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
 
 <!-- HERO -->
 <section class="hero">
@@ -477,7 +441,7 @@
         </svg>
       </a>
     </div>
-    <p class="hero-desc">A voice that brings words to life — whether that's a character, a story, or a brand. Warm, versatile, and always exactly what the moment needs.</p>
+    <p class="hero-desc">A voice that brings your work to life, whether that's a character, a story or your brand. Rachel's versatility will provide what your moment needs.</p>
     <div class="sample-pills">
 
       <button class="pill-player" id="pill-1">
@@ -513,13 +477,24 @@
         </span>
       </button>
 
+      <button class="pill-player" id="pill-4">
+        <span class="pill-play-icon">
+          <span class="pill-triangle"></span>
+          <span class="pill-pause"><span></span><span></span></span>
+        </span>
+        <span class="pill-info">
+          <span class="pill-title" id="ptitle-4">Dusk</span>
+          <span class="pill-progress-bg" id="pbar-4"><span class="pill-progress-fill" id="pfill-4"></span></span>
+        </span>
+      </button>
+
     </div>
   </div>
   <div class="hero-right">
     <div class="hero-colour-block"></div>
     <div class="hero-accent-bar"></div>
     <div class="hero-initials">RK</div>
-    <div class="hero-tag">Available for work 2026</div>
+    <div class="hero-tag">Available for work</div>
     <div class="genre-pills">
       <span class="pill">Narration</span>
       <span class="pill">Voice Acting</span>
@@ -536,9 +511,10 @@
   </div>
   <div class="about-right">
     <h2>A voice for every<br>story worth telling.</h2>
-    <p>Rachel Keeley is a Manchester-based voice artist with a talent for making every word land. Whether she's narrating an audiobook, inhabiting a character, or giving a brand its voice, she brings the same thing every time: clarity, warmth, and a delivery that feels completely alive.</p>
-    <p>Her voiceover work spans commercial campaigns, documentary narration, animation, and corporate film. Her voice acting ranges from intimate character-driven audio drama to high-energy gaming and animation. Whatever the brief, she finds the truth in it quickly — and makes it sound effortless.</p>
-    <p>She works from her professional home studio and is available for remote sessions worldwide, with fast turnaround and a collaborative approach from first read to final take.</p>
+    <p>Rachel Keeley is a Manchester-based voice artist with a talent for reliability, warmth and consistency. Whether narrating an audiobook, voicing a character or giving a voice to a commercial project, Rachel consistently delivers clarity, warmth, and a delivery that feels alive.</p>
+    <p>Rachel's work covers audiobook narration, animation, video games and corporate film. Her voice acting ranges from character-driven audio drama to high-energy gaming.</p>
+    <p>Rachel works from her professional home studio where she records at 32-bit float, ensuring a high dynamic range and ultra-low noise floor. Rachel is also experienced with audio mastering, handling audio file production in-house.</p>
+    <p>She works to a fast turnaround and believes in a collaborative approach throughout the production process.</p>
     <div class="stats-row">
       <div class="stat-item">
         <p class="stat-num">5</p>
@@ -561,8 +537,8 @@
   <p class="section-label" style="justify-content: center; text-align:center;">Get in touch</p>
   <h2>Let's make something.</h2>
   <p>For voiceover briefs, casting enquiries, collaborations, and rates — Rachel is quick to respond and easy to work with.</p>
-  <a href="mailto:hello@RachelKeeley.co.uk" class="contact-email">hello@RachelKeeley.co.uk</a>
-  <a href="mailto:hello@RachelKeeley.co.uk" class="btn-primary">Send an enquiry</a>
+  <a href="mailto:hello@rachelkeeley.co.uk" class="contact-email">hello@rachelkeeley.co.uk</a>
+  <a href="mailto:hello@rachelkeeley.co.uk" class="btn-primary">Send an enquiry</a>
 </section>
 
 <footer>
@@ -605,8 +581,8 @@
         vy:     rand(-0.03, 0.03),
         rot:    rand(0, Math.PI * 2),
         vrot:   rand(-0.001, 0.001),
-        alpha:  rand(0.018, 0.055),
-        stroke: rand(0.4, 1.8),
+        alpha:  rand(0.08, 0.18),
+        stroke: rand(1.0, 2.5),
         colour: COLOURS[Math.floor(Math.random() * COLOURS.length)],
         arc:    Math.random() > 0.5,   // arc or full circle
         span:   rand(0.3, 1.2),        // arc span in radians
@@ -643,7 +619,7 @@
         if (s.fill) {
           ctx.beginPath();
           ctx.arc(0, 0, s.r, 0, Math.PI * 2);
-          ctx.fillStyle = s.colour + (s.alpha * 0.35) + ')';
+          ctx.fillStyle = s.colour + (s.alpha * 0.5) + ')';
           ctx.fill();
         }
 
@@ -679,7 +655,7 @@
     try {
       const res = await fetch('/api/tracks');
       const tracks = await res.json();
-      [1,2,3].forEach(n => {
+      [1,2,3,4].forEach(n => {
         const t = tracks[n];
         if (!t) { initSimPlayer(n); return; }
         if (t.title) document.getElementById('ptitle-' + n).textContent = t.title;
@@ -687,7 +663,7 @@
         else         initSimPlayer(n);
       });
     } catch(e) {
-      [1,2,3].forEach(n => initSimPlayer(n));
+      [1,2,3,4].forEach(n => initSimPlayer(n));
     }
   }
 
@@ -700,7 +676,7 @@
   }
 
   function stopAll(except) {
-    [1,2,3].forEach(n => {
+    [1,2,3,4].forEach(n => {
       if (n === except) return;
       const a = audios[n];
       if (a && !a.paused) {
@@ -745,15 +721,16 @@
   }
 
   /* ── FALLBACK SIMULATED PLAYER ── */
-  const simDurations = { 1: 222, 2: 138, 3: 245 };
+  const simDurations = { 1: 222, 2: 138, 3: 245, 4: 187 };
   const simState = {
     1: { playing: false, progress: 0, interval: null },
     2: { playing: false, progress: 0, interval: null },
     3: { playing: false, progress: 0, interval: null },
+    4: { playing: false, progress: 0, interval: null },
   };
 
   function simStopAll(except) {
-    [1,2,3].forEach(n => {
+    [1,2,3,4].forEach(n => {
       if (n === except || !simState[n].playing) return;
       simState[n].playing = false;
       clearInterval(simState[n].interval);

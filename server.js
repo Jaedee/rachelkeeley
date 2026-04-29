@@ -224,5 +224,5 @@ app.get('/admin', (req, res) => {
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Aria Voss server running on http://127.0.0.1:${PORT}`);
+  console.log(`Rachel Keeley server running on http://0.0.0.0:${PORT}`);
 });
