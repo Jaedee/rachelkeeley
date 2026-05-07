@@ -315,6 +315,21 @@
     margin-bottom: 1rem;
   }
 
+  .big-headshot {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.big-headshot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
   .about-right p {
     font-size: 1.05rem;
     line-height: 1.85;
@@ -507,7 +522,9 @@
 <section class="about-section" id="about">
   <div class="about-left">
     <p class="section-label">About</p>
-    <div class="big-initial">R</div>
+    <<div class="big-headshot">
+      <img src="headshot.jpg" alt="Rachel Keeley headshot">
+    </div>
   </div>
   <div class="about-right">
     <h2>A voice for every<br>story worth telling.</h2>
